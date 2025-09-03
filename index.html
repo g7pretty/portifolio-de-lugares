@@ -1,0 +1,1259 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Roles, restaurantes, passeios e muito mais</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+    body {
+        background-color: #121212;
+        color: #f0f0f0;
+        font-family: 'Roboto', sans-serif;
+    }
+
+    h1, h5 {
+        color: #ffffff;
+    }
+
+    .container {
+        padding-top: 30px;
+        padding-bottom: 50px;
+    }
+
+    /* Card horizontal */
+    .card {
+        background-color: #1e1e1e;
+        border-radius: 12px;
+        overflow: hidden;
+        margin-bottom: 25px;
+        transition: transform 0.3s, box-shadow 0.3s;
+        cursor: pointer;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.6);
+    }
+
+    .card-img-top {
+        width: 200px;
+        height: 200px;
+        object-fit: cover;
+        border-radius: 12px 0 0 12px;
+        margin: 10px;
+    }
+
+    .card-body {
+        padding: 15px;
+        flex: 1;
+    }
+
+    .card-title {
+        font-weight: 700;
+        margin-bottom: 8px;
+        color: #ffffff;
+        font-size: 1.25rem;
+    }
+
+    .card-text {
+        color: #e0e0e0;
+        line-height: 1.4;
+        font-size: 0.95rem;
+    }
+
+    /* Modal Custom */
+    .modal-content {
+        background-color: #1e1e1e;
+        color: #f0f0f0;
+        border-radius: 12px;
+    }
+
+    .modal-header, .modal-footer {
+        border: none;
+    }
+
+    .modal-body p {
+        margin-bottom: 8px;
+        line-height: 1.5;
+        font-size: 0.95rem;
+    }
+
+    a {
+        color: #00bfff;
+        text-decoration: none;
+    }
+
+    a:hover {
+        text-decoration: underline;
+    }
+
+    /* Carousel */
+    .carousel-item img {
+        border-radius: 12px;
+        max-height: 500px;
+        object-fit: cover;
+        margin: auto;
+    }
+
+    @media (max-width: 768px) {
+        .card {
+            flex-direction: column;
+        }
+
+        .card-img-top {
+            width: 100%;
+            height: auto;
+            border-radius: 12px 12px 0 0;
+        }
+    }
+</style>
+</head>
+<body>
+<div class="container">
+    <h1 class="text-center mb-3">Roles, restaurantes, passeios e muito mais</h1>
+    <p class="text-center mb-5">Escolha o lugar, e vamos ser felizes!</p>
+    <div class="row" id="places-container">
+        <!-- Cards serão inseridos dinamicamente -->
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="placeModal" tabindex="-1" aria-labelledby="placeModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="placeModalLabel"></h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
+      </div>
+      <div class="modal-body" id="modalBody">
+        <!-- Carousel será inserido aqui via JS -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+const places = [
+            {
+                name: "Roller Jam - Pista de patinação",
+instagram: "@rollerjam.com.br",
+hours: "Segunda (fechado para eventos), terça a quinta 15h-22h, sexta 15h-23h, sábado 15h-2h, domingo e feriado 16h-22h",
+prices: "Entrada R$30-50, locação patins R$25 (3h)",
+description: "Pista de patinação retrô com decoração anos 80/90, fliperama, lanchonete estilo diner americano. Ideal para famílias e grupos.",
+address: "Rua Fernando Falcão, 393 - Mooca, São Paulo/SP",
+images: [
+    "https://lh3.googleusercontent.com/gps-cs-s/AC9h4nptxCjhf6HBBEcJNLoFzt2ggueFDPO0G5S1U6KdNBOsFJfYd0sp1KCJ3KaAi6f6DlEorRS_rUR8mKFBVhdjK-qY6dXXmlYXtqyPEAkZgh51ol6uE9wVP6v_oV0dleFDPrPLPgrq=s1600",
+    "https://lh3.googleusercontent.com/gps-cs-s/AC9h4nrhMboCiqhA1UGvjrextNuBx_Lzio_XgiSJnERKYKKiqMy70cE_MA8gfDKdkUMuWPqyY6fgbXlIcoTv7AuF1HyuOHLMOZ9mGmJRv1hSfU257N1e6BmF0LIdbzeKElzPbGmpCi64QA=s1600",
+    "https://lh3.googleusercontent.com/gps-cs-s/AC9h4novsCgAYgAcF6OkORJUZKFlTOVLP9__yP4q9Ry5_vuYDJFnmdjkW19LPfWjzu8-y7fe8hyGTSxsESaF983tOWUDQ0EEOWbh7ovVpKXnllcqcTKqmyaRrZiRvJPsHe4WCfqxDpeJ=s1600"
+]
+
+            },
+            {
+                name: "Roda Rico - Vila Lobos",
+            instagram: "@rodarico",
+            hours: "Terça a domingo 9h-19h (horários variam)",
+            prices: "Ingressos R$50-300 (cabine individual ou VIP)",
+            description: "Maior roda-gigante da América Latina com 91m de altura, cabines com ar-condicionado e vista panorâmica de SP. Pet friendly.",
+            address: "Av. Queiroz Filho, 1365 - Vila Hamburguesa, São Paulo/SP",
+            images: [
+    "https://lh3.googleusercontent.com/p/AF1QipPXsUHukC25MSST9bBqEvnKNeR99vhmo9XueSsk=s1600",
+    "https://lh3.googleusercontent.com/gps-cs-s/AC9h4nos4Pf_ut8e44N_62nfgJQQdeA2KudU7M-ZgNebQgz-pR_8NMJ3rjCpKQeq0P5dYSGIPZqkx9ES8nN2DEbYFXsAt8riiUoTt-3fRugqm6YbMT_O_6GescZan1ff9GuiBBBjwoE=s1600",
+    "https://lh3.googleusercontent.com/gps-cs-s/AC9h4nrPxOzKhs7W2OSu1mIfcE8Df-Jyu-okd-R9ufngPJmpUt7EOCB9KOpfCgCilL-vAam_JpdmTRFDxSu25tu3oCBtSxolWOmUs2VLi-S7TlVDLEcshdyzLN1SOuVCFSNLsIHBXND9mw=s1600"
+    ]
+            },
+            {
+                name: "Reconecta - Oficina de velas",
+                instagram: "@reconectaa",
+                hours: "Variável, consultar agenda",
+                prices: "Oficinas R$250-400",
+                description: "Oficinas de velas e fragrâncias com foco em reconexão sensorial. Kits aromáticos disponíveis.",
+                address: "Alameda dos Nhambiquaras, 1980 - Moema, São Paulo/SP",
+                images: [
+                    "https://lh3.googleusercontent.com/p/AF1QipNs3PBlg6-xZUkVgawFxi_jBXa_WX3u7sEA2Cd-=s1600",
+                    "https://lh3.googleusercontent.com/p/AF1QipNf-JAsK4vGXPbAddIHGra2f7XGs4VVfYBhNiIK=s1600",
+                    "https://lh3.googleusercontent.com/p/AF1QipPqD6-skoVbw1L3p14FzCm0PjPpYcGMXQdWOGmP=s1600"
+                ]
+            },
+            {
+                name: "Cine Sala - Cinema de rua com poltronas e bar na sala",
+                instagram: "@cinesala",
+                hours: "Variável, consultar programação",
+                prices: "Ingressos R$30-38, sofá individual/duplo R$42-100",
+                description: "Cinema de rua com sofás e poltronas, bar na sala. Programação eclética com filmes autorais.",
+                address: "Rua Fradique Coutinho, 361 - Pinheiros, São Paulo/SP",
+                images: [
+                    "https://lh3.googleusercontent.com/gps-cs-s/AC9h4norI4gHoGpMJpAQpVI6iaw05aJdE3vKYOETKmBvS1nbHJGas08LoMw5S7--3AdIsP4MW-MIILScXLwhaImY3YZgJsrn_O5Li8dIwKfvd_bPLVh1_mMsqxE3PP_AnkL_TSJ-MPbh=s1600",
+                    "https://lh3.googleusercontent.com/gps-cs-s/AC9h4nrBP-YLgNH-yI16c-R_BOgSFBVaVKKtL_8jVi-8VahYSEjsiscy2o5kUZ9nX32-VtyYn5gjos6INlcqJugO1hkrbgwxcY6FV-MAW-e7Kzc1G4dW6_69sdvvqpTyFBg8v6vgiID5ow=s1600",
+                    "https://lh3.googleusercontent.com/gps-cs-s/AC9h4npC8JigwDIkA0bsHX-7V4QgdzcOL-T0CoW3GfEMMMAbI87YPSFi_Os4ggPGo_NZwN983iR20HdrFdD_oOMXnWpcVSufAsVg4bz_wUBsmybFxfi9N34rcMrS8EGIhiCgwP_txkU=s1600"
+                ]
+            },
+            {
+                name: "Atlanta Snooker Bar - Maior sinuca do Brasil",
+                instagram: "@atlantasnookerbar",
+                hours: "Segunda-quinta 16h-0h, sexta 16h-1h, sábado 15h-1h, domingo 15h-22h",
+                prices: "Mesas R$33/hora, porções R$25-40",
+                description: "Maior snooker bar do Brasil com 27 mesas, blues e classic rock. Não permite apostas.",
+                address: "Rua Faustolo, 434 - Lapa, São Paulo/SP",
+                images: [
+                    "https://lh3.googleusercontent.com/p/AF1QipPCX-g2xil2aRnW-MM5YqkcbMBp7wy5QcWH9TEu=s1600",
+                    "https://lh3.googleusercontent.com/gps-cs-s/AC9h4noZXPd_n98EvrVeMCNKnEN5TDJBip9aOTZRQ65kIxt9WH7GKbu3LEzG-Ho54qHkQHSTN4VCNz9l8r6hY4qjoImk5rSDxPOfK_6wwObzQ2C7DyJ1YTpXa_Wv10AiWFy7mb-3dZQi=s1600",
+                    "https://lh3.googleusercontent.com/p/AF1QipOzirv6M-lHg2kxPQqZLoWzrozSfBJon8mJfKOZ=s1600"
+                ]
+            },
+            {
+                name: "Enconter - Clube de jogos e cartas e tabuleiros",
+                instagram: "@encounter.bg",
+                hours: "Terça-Feira 17:00-23:00, Sexta-feira 17:00-01:00, Sábado 13:00-01:00, Domingo 14:00-22:00",
+                prices: "Não especificado",
+                description: "Clube de jogos de tabuleiro, cartas e RPG. Ambiente para grupos e eventos.",
+                address: "Rua Joaquim Floriano, 732 - Itaim Bibi, São Paulo/SP",
+                images: [
+                    "https://lh3.googleusercontent.com/p/AF1QipP5WftQV9514pQ-1TWl4i1FLOm-BnUjnBcEB5bH=s1600",
+                    "https://lh3.googleusercontent.com/p/AF1QipMWsi1flaO2VIcQzad_SBFWhhYH2InYglJ1XIq_=s1600",
+                    "https://lh3.googleusercontent.com/gps-cs-s/AC9h4nrnxktjPX56hWLw35rhv0YjlEPHF8zOrbtxxh2D9nLpaHqKKBzK6Jjaa0VheFpEpM40hwUDrLXyGQ6Itk8Wc6WggJ8MdHUWvpAVntGGXsl5cf3wq8zzh3rwk-JJdePLpWOeSO8=s1600"
+                ]
+            },
+            {
+                name: "Escape 60 - Salas temáticas onde você resolve enigmas para escapar",
+                instagram: "@escape60",
+                hours: "Todos os dias 10h-22h",
+                prices: "Ingressos R$109,90/pessoa",
+                description: "Salas de escape com temas como Harry Potter. Experiência imersiva para grupos.",
+                address: "Rua Serra de Bragança, 658 - Tatuapé, São Paulo/SP",
+                images: [
+                    "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/30/04/2e/61/chernobyl-silencio-mortal.jpg?w=900&h=500&=s1600",
+                    "https://lh3.googleusercontent.com/gps-cs-s/AC9h4nrvqpn6cQSvU2Jsuf-G41Rw-z1T9NvBYYODcDv6igMQ5HbyfeDMnTlMQ4SgseCvz2F99azwE6U2nvST26wOJRqLJI8jPXCHcRcRYmJLMMbwIYcK7SPbgFOq_qLdDBfZtsRNCGM=s1600",
+                    "https://lh3.googleusercontent.com/gps-cs-s/AC9h4no4ZneqqrkrkUfPy1l1dsMRNSTcSTVQhRQ6OdufZYivLaxDMIWMvFik3rJQ34x4RMs35aZ8qb5CAYHse8IsA7PmVmIUmGRJImb2Cx0gLRa2XcXjdKPu__77V9CsErMJyWS-lyIv=s1600"
+                ]
+            },
+            {
+                name: "Bomboliche - Boliche e um parque de cama elástica",
+                instagram: "@bomboliche",
+                hours: "Seg-qui 14h-23h, sex-sab-dom 13h-0h",
+                prices: "Boliche R$169-189/hora (até 6 pessoas), trampolim R$45-55/hora",
+                description: "Boliche com parque de trampolins, espaço kids e restaurante.",
+                address: "Av. das Nações Unidas, 4777 - Shopping Villa Lobos, São Paulo/SP",
+                images: [
+                    "https://lh3.googleusercontent.com/gps-cs-s/AC9h4nrXMJODezi8MuKFL0bjfRBmT4hFzcz7o8FYLks4FEoF72ceHWdxMOH0OJs3jnynrtXqKjRPI_e-JSFup8J-mY6LyM0rXB9duVbFmVDHmcG3wANurWc5u-ctsCK_RiKacDUShA5R=s1600",
+                    "https://lh3.googleusercontent.com/gps-cs-s/AC9h4noW8SccJZRzuQ-_rzPXlJkwNSKmiKJ1Wj5Pgk8wHDJTN9Eu5fW2zxwXfvtiNcjCb_QkgGG3UV0hWuZr05kim4Edak2SwvqR4ke2Xpy8Be8DSAtO3px7byeI-iB36aIY5-HSKxE=s1600",
+                    "https://lh3.googleusercontent.com/gps-cs-s/AC9h4no5M6nbzvByNbYogQkONnAGSn6uWY4LjmNJbb-N86837PfyyPi_n79GKWLwmhWgANyNrSILMk6I5uI_dUe0PxdcaZnS9XwSsN5xqPO5N-nltl0ODuIFH99e6ZIJ5-IR-L-aUukY=s1600"
+                ]
+            },
+            {
+                name: "Bario Bar - Bar com jogos retrô",
+                instagram: "@bario_bar",
+                hours: "Seg-qua 17h-0h, qui-sex 17h-1h, dom 15h-22h",
+                prices: "Fichas R$5-10, porções R$27-42",
+                description: "Bar arcade com mais de 100 máquinas de pinball e fliperama. Happy hour com drinks.",
+                address: "Rua Euclides Pacheco, 880 - Tatuapé, São Paulo/SP",
+                images: [
+                    "https://lh3.googleusercontent.com/p/AF1QipNjQr_D-EoNDyLIZKhuDh1d9H2VZHlj-fV8sRQb=s1600",
+                    "https://lh3.googleusercontent.com/gps-cs-s/AC9h4npyy6-4Np7HtQYQSHz2_4DkiS1r2PVaccsT-Z4W-F9_GjwiawpdGgjEi5U-m8aCXjkjUbe3FvJNqUQ30ZysOlgxS8dj-6Zh1GguQXeMMmwArOg1K-QW1pQYNax_uBJEsHa5Kh-q-Vuln7I=s1600",
+                    "https://lh3.googleusercontent.com/p/AF1QipPcilX7k9-vYVNQU_qf6_wnH_Nvq17v9GSwwx4R=s1600"
+                ]
+            },
+            {
+                name: "Curtiça Bar - Bar com karaokê e baladinha",
+                instagram: "@curticabar",
+                hours: "Quarta-Feira até Domingo das 18:00-04:00",
+                prices: "Não especificado",
+                description: "Bar com karaokê e pista de dança. Ambiente para happy hour e festas.",
+                address: "R. Inácio Pereira da Rocha, 87 - Pinheiros, São Paulo - SP, 05432-010",
+                images: [
+                    "https://lh3.googleusercontent.com/p/AF1QipOehevJcHLfdb9OACxpcQix-oUlrdbQiefJXpCy=s1600",
+                    "https://lh3.googleusercontent.com/p/AF1QipON6BcxEHJ3PSJ8e5g5WHi0iqR0Luxeimkqhpnj=s1600",
+                    "https://lh3.googleusercontent.com/gps-cs-s/AC9h4nodFsjKpsXj_AzkvgNZAmf8QUJXDkr4IMwh0tBhg1wdnrx3LYfm9s3PSsIC30oLtt3VsT6iJCJ9df6IPJvDO7Y8oL1vru_f7nYo_BkDJegRUfzoRX11Q7L3_28DP19AEnvdLMS6rQ=s1600"
+                ]
+            },
+            {
+                name: "Altitude Park - Parque com cama elástica",
+                instagram: "@altitudepark",
+                hours: "Seg-sex 13h-22h, sab-dom 10h-20h/22h",
+                prices: "Ingressos R$70-120/hora",
+                description: "Parque de trampolins com atrações como guerra de cotonetes e desafio ninja. Festas de aniversário disponíveis.",
+                address: "Várias unidades: Moema, Tatuapé, etc.",
+                images: [
+                    "https://lh3.googleusercontent.com/p/AF1QipM1CWTWZDbn3iojKUvv33eaMdsvAYx_i6h5PvWx=s1600",
+                    "https://lh3.googleusercontent.com/gps-cs-s/AC9h4noThzj4ITx263q1HL_PXV-rrUyklCF7M9AU3LAGpTEGn8ULdpAcdCWEZ2hDE97V5oOuToNykfNhqs2NAYZ05EcUaxbDhesnEh4R6ZBYy2FYBbYNzNhxBILTrErWeup6fHijO4Dh=s1600",
+                    "https://lh3.googleusercontent.com/gps-cs-s/AC9h4npB_RWXbJpbprxAb4BdC_EIyunbpazMukDDHzj9p_D0MXCc3IZfKwspJhwRUfRAV89k7daoci4hT9To2f8QI9pVSjFbFSo_xbSDwNPbLlDCtkEmKHZPdUK1JoSFR2RKTe-xiJ9xmw=s1600"
+                ]
+            },
+            {
+                name: "300 Sky Bar",
+                instagram: "@300skybar",
+                hours: "Seg-sex 18h-1h, sab 16h-1h, dom 14h-20h",
+                prices: "Drinks R$26-41, petiscos R$27-58",
+                description: "Rooftop com gastronomia, drinks e música eletrônica. Vista da Faria Lima.",
+                address: "Av. Brigadeiro Faria Lima, 4509 – 18º andar, São Paulo/SP",
+                images: [
+                    "https://lh3.googleusercontent.com/p/AF1QipPFF_tw6fKEgjYTYsmz3YXYpGVAk3nAf2OKGpfI=s1600",
+                    "https://lh3.googleusercontent.com/gps-cs-s/AC9h4nr9Ff0KLzbC1Ak9PjI33IHrLYNGudPuSXBoGtUKoQtL_C_07oC5taZO7Ir8LKDT4b7Kz334L5_GyFPEQF_dq8E8Rt4LwXDNP2riWzAk13n1Khu9RR51djla2QHKCGjcYwOmMRc=s1600",
+                    "https://lh3.googleusercontent.com/gps-cs-s/AC9h4nq09C_MIBktSD54YArRjeC6YA68sh29I8i0WUk0xOicOjB6In5hZZoCQGQqQXUOmWKzMhiwC7k_jwSOpk1PX7krv0Oq-2mE9CofLoRLx9wKOlzQHwYb4-b5yNtpBDET-o-W64v0SXzNez4=s1600"
+                ]
+            },
+            {
+                name: "SubAstor Bar do Cofre",
+                instagram: "@subastor",
+                hours: "Qua-qui 16h-0h, sex 16h-1h, sab 14h-1h, dom 14h-20h",
+                prices: "Drinks R$38-59",
+                description: "Bar no cofre subterrâneo do Farol Santander. Coquetelaria com ingredientes brasileiros.",
+                address: "Rua João Brícola, 24 – Centro, São Paulo/SP",
+                images: [
+                    "https://lh3.googleusercontent.com/gps-cs-s/AC9h4nqsUBD6rAOpo4mRTSHpL0lpIOci1-Wl1V0jUS86bRw-fnrFbSw9J7x_4H4Ev5e0TM1DzHaosELyDo2LIiDbb00TWnuzvEcCPTFx-3fQdUrM9r_ecWFTCQJTSfLxsrNIpM2CZpbF=s1600",
+                    "https://lh3.googleusercontent.com/gps-cs-s/AC9h4nrW0m9bRb5YxuiuRE2ZzzGgTJZ9onhwgWr-Jn24h9u_HZf39fHU5DU8nUfeWvTBGAgNwICIkyx_0kmQf4cV2Tu5PHxAyY_qlaIQEWkqJlCkJ2xT0RmYwUmjU2Ik9llTSI6mwb1-OoBViYM=s1600",
+                    "https://lh3.googleusercontent.com/gps-cs-s/AC9h4nrM-jx4r5tMs-IxlzvgbOym7QimysKZPD9RXV5ZlwDTmz1ZNZ8m-WwR78UFYuwz37JRuvwMNTU57GxCsxRHsi-At-DpRcYxtuNr9gKb3NJTtG2HnTuAJEz6Nge8dPxT79Z4Ozlg=s1600"
+                ]
+            },
+            {
+                name: "Riviera Bar",
+                instagram: "@rivierabarerestaurante",
+                hours: "24h (exceto manutenção)",
+                prices: "Drinks R$26-41, porções R$36-65",
+                description: "Bar clássico reaberto na Paulista. Funciona 24h com cardápio variado.",
+                address: "Av. Paulista, 2584 - Bela Vista, São Paulo/SP",
+                images: [
+                    "https://lh3.googleusercontent.com/gps-cs-s/AC9h4npK9RVvlvM-_eS7Z_zjN4hgBFe3unEqzVYvB1blovXihRb19upUKxBJa8jxM2C0sDbhOz8bs8a0F8z0VHUG13UgSFQ0_ciDVR06BLB-dkMAT8_j2aSS8H76Hr7E6DcmCH2KXGQa=s1600",
+                    "https://lh3.googleusercontent.com/gps-cs-s/AC9h4noKt4VHBHlracfzhYF9Lv3Fiz3fZNaLg8Dw5bS0sN8DK5x1Q3-eV_EinkYz1o-g8ZvMCOWLspQR18FAqZZxIuB2tEEU-4vH4lxel5dK42nQWtzyvDVOINn8vV-CLhVP1I865ZdhGe9NItJb=s1600",
+                    "https://lh3.googleusercontent.com/gps-cs-s/AC9h4npR6M43w2t4dJYYKUZx4iLhYvLuV_OjjMdK9fl3xe0XPW9LtkUBWPejYKo41OZpsMQKV-qE0JI-DxtWLNjGwJn_CLIbGaQqtO2fYloR6Waxj-VX0NJtrroAtXkPYllZZtfzqVgG5-nTNjKu=s1600"
+                ]
+            },
+            {
+                name: "Skye Bar",
+                instagram: "@skyerestaurantebar",
+                hours: "Seg-dom 18h-0h30/23h30",
+                prices: "Drinks R$35-590, pratos R$70-135",
+                description: "Bar na cobertura do Hotel Unique com piscina e vista panorâmica. DJ a partir das 19h.",
+                address: "Av. Brigadeiro Luís Antônio, 4700 - Jardim Paulista, São Paulo/SP",
+                images: [
+                    "https://lh3.googleusercontent.com/p/AF1QipPVCAHYhYLlUWGVC7yJAHVuhO1-2axK-jjx-_qE=s1600",
+                    "https://lh3.googleusercontent.com/p/AF1QipO61EV0VlsoXbK6TvMfT2tgcmvMSEpXLOTL3A8h=s1600",
+                    "https://lh3.googleusercontent.com/gps-cs-s/AC9h4noA99Z2FcDvbBcck_GlXSlf3z8Aqx0enYSQ6F9tKWDqYG-1za0he2Gd3gWvGG3gjnPOpUSDdoXTl19D0i_0OG9VcjNO1MtqZ23Lit_FkyBtU51VGL2ze9IP778hm_ggZ7TjjINw=s1600"
+                ]
+            },
+            {
+                name: "Clementina Bar de Vinhos",
+                instagram: "@clementina___sp",
+                hours: "Seg-dom 18h-0h/16h-0h/14h-20h",
+                prices: "Vinhos R$129-580, pizzas R$56-58",
+                description: "Bar de vinhos naturais com ambiente porão. Tábuas de queijos e charcutaria.",
+                address: "Rua João Moura, 613 - Pinheiros, São Paulo/SP",
+                images: [
+                    "https://lh3.googleusercontent.com/p/AF1QipN25StJAu52vxElgu4KwDLSEPjuJRxD9uKutIly=s1600",
+                    "https://lh3.googleusercontent.com/gps-cs-s/AC9h4npsdd3OiPefPg18ehIQS9omMV47_y2dGyqbl9_VNf7NxAAngRWXftEaRqz1AlN-xOsEh9Cx3cuw4cM7A8vkEYNCBjZbXL4Od6jZIqkDlHnX0M8YrJI2cqQUXtUewZfusLmL2Uyy=s1600",
+                    "https://lh3.googleusercontent.com/gps-cs-s/AC9h4nq0ycvXU3v3CW9k3E5jSLUk0xaKpGEZWpTfPqkl3wVxddFh95lzu7npbu0dppwZndFxuzUYOllXzhmTMxdbU6cLJR2SH--F6rX7cZLBK4AQrOjMuBnHzPcD-60g0cohHQmPdifh=s1600"
+                ]
+            },
+            {
+                name: "Miles Wine & Jazz Bar",
+                instagram: "@mileswinebar",
+                hours: "Qua-sáb 17h-1h, dom 18h-22h30",
+                prices: "Vinhos R$116-288, pizzas R$48-58",
+                description: "Bar com jazz ao vivo, pizzas e 150 vinhos. Apresentações de quarta a sábado.",
+                address: "R. Antônio de Macedo Soares, 1369 - Campo Belo, São Paulo/SP",
+                images: [
+                    "https://lh3.googleusercontent.com/p/AF1QipOydqstYme_7rYhDgWJjeKBbNa70wBvrjKymGkh=s1600",
+                    "https://lh3.googleusercontent.com/p/AF1QipPXx1dBX5UEr72XsK1X3wDI-O_y-b-mxxvIGP2A=s1600",
+                    "https://lh3.googleusercontent.com/gps-cs-s/AC9h4nogdp-OvsixqLWoKwGgLBxDB1X-fCD0lq8DXNeFz2ngxVR4tK1n62_jNL1VkiRWt0zW_lHyR-jrduzSxPIVVrG7BPDED2zj06qzyOYjRYkfN90SuBQ8AtgDhyRmPuLqZfOqxUkq=s1600"
+                ]
+            },
+            {
+                name: "Pão com Carne Hamburgueria",
+                instagram: "@paocomcarne_hamburgueria",
+                hours: "Seg-sáb 12h-16h/18h30-22h30",
+                prices: "Burgers R$32-38, batatas R$35",
+                description: "Hamburgueria com burgers smash e pães artesanais. Ambiente simples, foco na qualidade.",
+                address: "R. Joaquim Floriano, 595 - Itaim Bibi, São Paulo/SP",
+                images: [
+                    "https://lh3.googleusercontent.com/gps-cs-s/AC9h4npsdi_9AXQib8iYnWEJ62PGkBDpWtJ1Ss-ULzk5RXi1z6btk5-AygZAhnNL9QLXGJhSaCA0lV6uERMvc6U0tTlC-cKQsVc89-WmfIwX2h_P1pD-Jj8I9KNjL0Ngv3OdDNYS3F-sS5BRiSyD=s1600",
+                    "https://lh3.googleusercontent.com/gps-cs-s/AC9h4nqd34V9BBhNW0aCwrAXIWxUNvr9cqovCMQap6YXKNQLSpt8fdv3qhWgKnaT8MjhqyHlp16jmksLoo2dHGHC19UBmzvycGUw2ck0MYBzegMY7cQSwdAx9qawQpjyq6jyZoM6uDJ91YeYRWxY=s1600",
+                    "https://lh3.googleusercontent.com/gps-cs-s/AC9h4nqnmmHphEcYKwTtbp7I4TxTObRdMmnUh_TlJuSD0Vd5OseYzCMtqn-1mP7QyR2z46t94SzEH_bqwdx1iuOH_--TafC81ND7AEPUO5LI_cNMEG7pInef1Vj31m-V2if_rLbgH4r74J1tWqjs=s1600"
+                ]
+            },
+            {
+                name: "Beco Hexagonal - PRIORIDADE",
+                instagram: "@becohexagonal",
+                hours: "Seg-qui 12h-23h30, sex-sab 12h-0h, dom 12h-22h",
+                prices: "Entrada R$50 (descontada no consumo), burgers R$30-40",
+                description: "Restaurante temático de Harry Potter com interações mágicas e cardápio bruxo.",
+                address: "R. Gaivota, 1112 - Moema, São Paulo/SP",
+                images: [
+                    "https://lh3.googleusercontent.com/p/AF1QipMlDBAPR1whjIjWcmfCRj76HFKXs-wS0u9v7Zkq=s1600",
+                    "https://lh3.googleusercontent.com/gps-cs-s/AC9h4np1Ktn2Uf0U4kqsXbBOxhcx9LFc-XzsLK7EQg42cKkgfK7OhoA3Itx2ngK45Yr40Px3rQvaCDe44v2U-8TZLcy5e8EkvDoscigzceG8RKs5C4iIKxLdjX4q5CWttAvYqv0oYK8herADju7R=s1600",
+                    "https://lh3.googleusercontent.com/gps-cs-s/AC9h4nqWjWyuZYRJYpCOLdLkBzXCe4MIsUIGJUcqL9esgy1ERzxHcCgEW3_w5DRelG5iMXr8x4oY_2EJ5lg8sgaj_gpfigYMEMuo3O9jgToCqJTmaOkjCRvjAbHh2keA3PCu8RdweZI=s1600"
+                ]
+            },
+            {
+                name: "Vinícola XV de Novembro",
+                instagram: "@vinicolaxvdenovembro",
+                hours: "Seg-sex 9h-17h, sab-dom-feriados 9h-18h",
+                prices: "Degustações R$15-320, piquenique R$65-95",
+                description: "Vinícola tradicional com tour pelos vinhedos, degustações e empório. Tradição desde 1930.",
+                address: "Estrada Achiles Augusto de Moraes, 500 - São Roque/SP",
+                images: [
+                    "https://lh3.googleusercontent.com/p/AF1QipNkuWA3xrao-PFLitQSp9RGdk8Dvijus0INlGyz=s1600",
+                    "https://lh3.googleusercontent.com/p/AF1QipMqNQyM2cGx5PMbu31F-kieU0g8tLiTIpev1Qnu=s1600",
+                    "https://lh3.googleusercontent.com/gps-cs-s/AC9h4nqjEj6a2uDUZxn6SS2cEeanyKiAnvKCqvQyBu5XZm1CqNT5whwnTbjey8L-i9gOE94YO2uY86hoxgtjYnvKHutv-XNJ8EclJ5zv_PiIramADag_ZffD0WfNb-2vFCs-6J8jLz8=s1600"
+                ]
+            },
+            {
+                name: "Quinta do Olivardo",
+                instagram: "@quintadoolivardo",
+                hours: "Seg-qui 9h30-17h30, sex-sáb 9h30-22h, dom 9h30-18h",
+                prices: "Bacalhau R$155-299, pastel de nata R$10",
+                description: "Restaurante português com adega, hospedagem e lazer. Pisa da uva em jan-fev.",
+                address: "Estrada do Vinho, Km 4 - São Roque/SP",
+                images: [
+                    "https://lh3.googleusercontent.com/gps-cs-s/AC9h4nqgfDZwJm0b-bSOW9eMVwScwE4ddI49dQykzk5QPCkMH_2Lx5S0WaFyzKW9_mYK4_Z5Ov_J0sUgySH4vnGr90vJ0Sr6wlQOVYipOLwHHg94EfTx1rnsas_iE_hHEE_p5vRO5lwUA6xHWrQg=s1600",
+                    "https://lh3.googleusercontent.com/gps-cs-s/AC9h4nr4B0tFrUyuUgpcy9vG8v306rsk6UxgRgACVTZDuYBy8c-2yGspFtwtZmI3zGcljRmwMVgexcQ-2NQ9Cyp1qqJFDpOaVgkdFoX18QYSFInCsIATi7hYa61nWwX7MNJ3T6FXBdLn=s1600",
+                    "https://lh3.googleusercontent.com/p/AF1QipNkUbFhlI50vhVOPS3x-BfqF5hkT6p3qKS_SaUD=s1600"
+                ]
+            },
+            {
+                name: "Rota do Vinho de São Roque",
+                instagram: "@roteirodovinho",
+                hours: "Variável por estabelecimento",
+                prices: "Entrada gratuita, degustações R$0-320",
+                description: "Roteiro com 30+ vinícolas, adegas e restaurantes. Passeio gratuito pela tradição vinícola.",
+                address: "Estrada do Vinho, Estrada dos Venâncios e Rodovia Quintino de Lima - São Roque/SP",
+                images: [
+                    "",
+                    "",
+                    ""
+                ]
+            },
+            {
+                name: "Rug Lab Tufting Studio - Tapecaria",
+                instagram: "@ruglab_tufting",
+                hours: "Ter-sex 13h30-17h30, sab-dom 10h-14h/15h-19h",
+                prices: "Workshops R$380+",
+                description: "Estúdio de tufting para criar tapetes personalizados. Técnica asiática com pistola de lã.",
+                address: "R. Thomaz Gonzaga, 95 - Liberdade, São Paulo/SP",
+                images: [
+                    "",
+                    "",
+                    ""
+                ]
+            },
+            {
+                name: "Café da Roça",
+                instagram: "Não encontrado",
+                hours: "Variável, consultar",
+                prices: "Não especificado",
+                description: "Café rústico com produtos locais. Ambiente aconchegante para brunch ou café.",
+                address: "Não encontrado",
+                images: [
+                    "",
+                    "",
+                    ""
+                ]
+            },
+            {
+                name: "Donnie's - Hamburgueria",
+                instagram: "@donniesburger",
+                hours: "Seg-dom 12h-23h",
+                prices: "Burgers R$25-35",
+                description: "Hamburgueria com smash burgers Angus. Ambiente inspirado na Califórnia.",
+                address: "R. João Cachoeira, 856 - Itaim Bibi, São Paulo/SP",
+                images: [
+                    "",
+                    "",
+                    ""
+                ]
+            },
+            {
+                name: "Fatz Delicias - Hamburgueria",
+                instagram: "@fatzdelicias",
+                hours: "Seg-dom 12h-0h",
+                prices: "Burgers R$25-34, donuts R$13",
+                description: "Hamburgueria com smash burgers e sanduíches americanos. Opções vegetarianas.",
+                address: "R. Cunha Gago, 854 - Pinheiros, São Paulo/SP",
+                images: [
+                    "",
+                    "",
+                    ""
+                ]
+            },
+            {
+                name: "Bullguer",
+                instagram: "@bullguer",
+                hours: "Seg-dom 11h30-23h (varia por unidade)",
+                prices: "Burgers R$18-25, combos R$24+",
+                description: "Hamburgueria com smash burgers. Várias unidades em SP.",
+                address: "Várias unidades: Pinheiros, Vila Madalena, etc.",
+                images: [
+                    "",
+                    "",
+                    ""
+                ]
+            },
+            {
+                name: "Mitche's Burgers & Fries",
+                instagram: "@mitchesburgers",
+                hours: "Variável, consultar",
+                prices: "Burgers R$20-30",
+                description: "Hamburgueria com burgers artesanais. Ambiente casual.",
+                address: "Não encontrado",
+                images: [
+                    "",
+                    "",
+                    ""
+                ]
+            },
+            {
+                name: "JOTA - Check",
+                instagram: "@jotahamburgers",
+                hours: "Seg-dom 11h-23h",
+                prices: "Combos R$39,90+",
+                description: "Fast-food com burgers smash. Ambiente aberto no shopping.",
+                address: "Av. Paulista, 1483 - Jardim Paulista, São Paulo/SP",
+                images: [
+                    "",
+                    "",
+                    ""
+                ]
+            },
+            {
+                name: "Madero & Jeronimo Burger Alphaville",
+                instagram: "@maderorestaurante",
+                hours: "Seg-dom 11h30-23h",
+                prices: "Burgers R$30-50",
+                description: "União de Madero e Jeronimo com burgers tradicionais e smash.",
+                address: "Av. Ipanema, 260 - Alphaville, Barueri/SP",
+                images: [
+                    "",
+                    "",
+                    ""
+                ]
+            },
+            {
+                name: "Museu do Livro Esquecido",
+                instagram: "@museudolivroesquecido",
+                hours: "Sab-dom 10h-17h",
+                prices: "Entrada gratuita sab-dom, R$20/10 outros dias",
+                description: "Museu sobre história do livro em casarão histórico. Exposições e oficinas.",
+                address: "R. Santa Luzia, 31 - Sé, São Paulo/SP",
+                images: [
+                    "",
+                    "",
+                    ""
+                ]
+            },
+            {
+                name: "BETC Havas Café",
+                instagram: "@betchavascafe",
+                hours: "Seg-sex 7h-19h, sab-dom 8h-18h",
+                prices: "Expresso R$9, menu executivo R$69",
+                description: "Cafeteria em agência de publicidade com livraria. Café da manhã a jantar.",
+                address: "R. Oscar Freire, 1128 - Jardins, São Paulo/SP",
+                images: [
+                    "",
+                    "",
+                    ""
+                ]
+            },
+            {
+                name: "Travessa do Bruxo",
+                instagram: "@travessadobruxo",
+                hours: "Ter-sex 18h-23h, sab 13h-23h, dom 13h-21h",
+                prices: "Burgers R$30-35, poções R$16-26",
+                description: "Hamburgueria temática de Harry Potter com interações mágicas.",
+                address: "R. Coelho Lisboa, 881 - Tatuapé, São Paulo/SP",
+                images: [
+                    "",
+                    "",
+                    ""
+                ]
+            },
+            {
+                name: "Bráz Pizzaria - Pinheiros",
+                instagram: "@familiabraz",
+                hours: "Seg-dom 18h-0h",
+                prices: "Pizzas R$117-129",
+                description: "Pizzaria com massa fermentação natural. Clássicos italianos e khachapuri.",
+                address: "R. Vupabussu, 271 - Pinheiros, São Paulo/SP",
+                images: [
+                    "",
+                    "",
+                    ""
+                ]
+            },
+            {
+                name: "Artzen Restaurante",
+                instagram: "@artzenrestaurante",
+                hours: "Seg-dom 7h-22h",
+                prices: "Pratos R$50-126",
+                description: "Restaurante com cozinha afetiva mediterrânea. Ambiente com plantas e arte.",
+                address: "R. José Maria Lisboa, 1000 - Jardins, São Paulo/SP",
+                images: [
+                    "",
+                    "",
+                    ""
+                ]
+            },
+            {
+                name: "Coliseum - Panini Italiani",
+                instagram: "@coliseum.panini",
+                hours: "Ter-qui 11h-22h, sex 12h-23h, sab 10h-23h, dom 10h-22h",
+                prices: "Panini R$49-62, saladas R$48",
+                description: "Casa de panini italianos com pão schiacciata. Ambiente inspirado no Coliseu.",
+                address: "R. Fernão Dias, 37 - Pinheiros, São Paulo/SP",
+                images: [
+                    "",
+                    "",
+                    ""
+                ]
+            },
+            {
+                name: "Cicci Restaurante Bar",
+                instagram: "@ciccirestaurante",
+                hours: "Seg-dom 12h-23h",
+                prices: "Drinks R$29-52, pratos R$35-98",
+                description: "Restaurante mediterrâneo com arte e piano. Menu executivo e open wine.",
+                address: "R. Mourato Coelho, 1343 - Vila Madalena, São Paulo/SP",
+                images: [
+                    "",
+                    "",
+                    ""
+                ]
+            },
+            {
+                name: "London Coffee Station",
+                instagram: "@londoncoffeestation.st",
+                hours: "Seg-dom 9h-20h",
+                prices: "Expresso R$6-9, brunch R$40+",
+                description: "Cafeteria temática londrina com breakfast, brunch e afternoon tea.",
+                address: "R. Joaquim Távora, 1085 - Vila Mariana, São Paulo/SP",
+                images: [
+                    "",
+                    "",
+                    ""
+                ]
+            },
+            {
+                name: "Almanara - (Shopping Villa Lobos)",
+                instagram: "@almanaraoficial",
+                hours: "Seg-dom 11h30-22h30/23h",
+                prices: "Esfirras R$9, pratos R$46-66",
+                description: "Restaurante árabe tradicional com esfihas, babaganuche e charutinhos.",
+                address: "Av. das Nações Unidas, 4777 - Shopping Villa Lobos, São Paulo/SP",
+                images: [
+                    "",
+                    "",
+                    ""
+                ]
+            },
+            {
+                name: "Mug.sp - Faria Lima",
+                instagram: "@mugsp",
+                hours: "Seg-sáb 9h-19h, dom 9h-17h",
+                prices: "Brunch R$49-85, torradas R$35",
+                description: "Cafeteria com pães artesanais e brunch. Ambiente aconchegante.",
+                address: "Av. Brigadeiro Faria Lima, 949 - Pinheiros, São Paulo/SP",
+                images: [
+                    "",
+                    "",
+                    ""
+                ]
+            },
+            {
+                name: "Cadillac BBQ",
+                instagram: "@cadillacbbq",
+                hours: "Ter-sex 12h-15h/18h30-23h, sab 12h-0h, dom 12h-17h",
+                prices: "Combo BBQ R$45-55, sanduíches R$26-34",
+                description: "Churrasco texano com brisket e ribs. Ambiente faroeste.",
+                address: "R. Borges de Figueiredo, 60 - Mooca, São Paulo/SP",
+                images: [
+                    "",
+                    "",
+                    ""
+                ]
+            },
+            {
+                name: "Sto Arnulfo Espetos",
+                instagram: "@stoarnulfo",
+                hours: "Seg-dom 12h-23h",
+                prices: "Espetos R$20-40, porções R$25-55",
+                description: "Bar de espetos com ambiente arejado. Cerveja gelada e pratos variados.",
+                address: "R. Curupacê, 463 - Mooca, São Paulo/SP",
+                images: [
+                    "",
+                    "",
+                    ""
+                ]
+            },
+            {
+                name: "89ºC Coffee Station - Café",
+                instagram: "@89coffee",
+                hours: "Seg-dom 8h-20h",
+                prices: "Expresso R$6-9",
+                description: "Cafeteria com cafés especiais e doces. Ambiente moderno.",
+                address: "Não encontrado",
+                images: [
+                    "",
+                    "",
+                    ""
+                ]
+            },
+            {
+                name: "Museu Histórico da Imigração Japonesa no Brasil - Passeio",
+                instagram: "@museubunhyo",
+                hours: "Ter-dom 10h-17h",
+                prices: "Entrada R$16-32",
+                description: "Museu sobre imigração japonesa com exposições e jardim. Visitas guiadas.",
+                address: "R. São Joaquim, 381 - Liberdade, São Paulo/SP",
+                images: [
+                    "",
+                    "",
+                    ""
+                ]
+            },
+            {
+                name: "Restaurante Itiriki Cozinha Oriental - Almoço",
+                instagram: "@itiriki",
+                hours: "Seg-dom 11h30-15h/18h-22h",
+                prices: "Pratos R$50-100",
+                description: "Restaurante japonês com almoço oriental. Sushi e sashimi frescos.",
+                address: "Não encontrado",
+                images: [
+                    "",
+                    "",
+                    ""
+                ]
+            },
+            {
+                name: "Feira da Liberdade (Caso final de semana)",
+                instagram: "@feiradaliberdade",
+                hours: "Sab-dom 9h-18h",
+                prices: "Entrada gratuita",
+                description: "Feira oriental com artesanato, comida japonesa e cultural. Fim de semana.",
+                address: "Praça da Liberdade - Liberdade, São Paulo/SP",
+                images: [
+                    "",
+                    "",
+                    ""
+                ]
+            },
+            {
+                name: "Cana Mania na Liberdade - Finalizar",
+                instagram: "Não encontrado",
+                hours: "Variável, consultar",
+                prices: "Não especificado",
+                description: "Loja de doces e cana na Liberdade. Produtos doces tradicionais.",
+                address: "Não encontrado",
+                images: [
+                    "",
+                    "",
+                    ""
+                ]
+            },
+            {
+                name: "Hamburgueria Burger For You",
+                instagram: "@burgerforyou",
+                hours: "Seg-dom 12h-23h",
+                prices: "Burgers R$20-30",
+                description: "Hamburgueria com opções variadas. Ambiente casual.",
+                address: "Não encontrado",
+                images: [
+                    "",
+                    "",
+                    ""
+                ]
+            },
+            {
+                name: "Ferrovia Secreta - Sequência de Comida Americana",
+                instagram: "Não encontrado",
+                hours: "Variável, consultar",
+                prices: "Não especificado",
+                description: "Restaurante com tema ferrovia e comida americana. Sequências temáticas.",
+                address: "Não encontrado",
+                images: [
+                    "",
+                    "",
+                    ""
+                ]
+            },
+            {
+                name: "Fo Guang Shan Templo Zu Lai",
+                instagram: "@templozulai",
+                hours: "Ter-dom 9h-17h",
+                prices: "Entrada gratuita",
+                description: "Templo budista com jardim e meditação. Visitas guiadas.",
+                address: "Estrada Fernando Nobre, 1461 - Cotia/SP",
+                images: [
+                    "",
+                    "",
+                    ""
+                ]
+            },
+            {
+                name: "Big Kahuna - Hamburgueria",
+                instagram: "@bigkahunaburger",
+                hours: "Seg-dom 11h-23h",
+                prices: "Burgers R$25-40",
+                description: "Hamburgueria temática havaiana com burgers gourmet.",
+                address: "Não encontrado",
+                images: [
+                    "",
+                    "",
+                    ""
+                ]
+            },
+            {
+                name: "Bombacafé",
+                instagram: "Não encontrado",
+                hours: "Variável, consultar",
+                prices: "Não especificado",
+                description: "Cafeteria com bombas e cafés especiais.",
+                address: "Não encontrado",
+                images: [
+                    "",
+                    "",
+                    ""
+                ]
+            },
+            {
+                name: "Number One - The Finest Burger",
+                instagram: "@numberoneburger",
+                hours: "Variável, consultar",
+                prices: "Burgers R$20-35",
+                description: "Hamburgueria com burgers premium. Ambiente moderno.",
+                address: "Não encontrado",
+                images: [
+                    "",
+                    "",
+                    ""
+                ]
+            },
+            {
+                name: "Fantasmagória Bar",
+                instagram: "Não encontrado",
+                hours: "Variável, consultar",
+                prices: "Não especificado",
+                description: "Bar com tema fantasmagórico. Drinks criativos.",
+                address: "Não encontrado",
+                images: [
+                    "",
+                    "",
+                    ""
+                ]
+            },
+            {
+                name: "Boteco Central",
+                instagram: "@botecocentral",
+                hours: "Seg-dom 11h-0h",
+                prices: "Porções R$20-40",
+                description: "Boteco clássico com petiscos e cerveja gelada.",
+                address: "Não encontrado",
+                images: [
+                    "",
+                    "",
+                    ""
+                ]
+            },
+            {
+                name: "Bob Esponja Burguer & Restaurante",
+                instagram: "@bobesponjaburguer",
+                hours: "Variável, consultar",
+                prices: "Burgers R$15-25",
+                description: "Hamburgueria temática de Bob Esponja com lanches divertidos.",
+                address: "Não encontrado",
+                images: [
+                    "",
+                    "",
+                    ""
+                ]
+            },
+            {
+                name: "Coffee Story",
+                instagram: "@coffeestory",
+                hours: "Seg-dom 8h-20h",
+                prices: "Cafés R$6-12",
+                description: "Cafeteria temática com cafés e histórias.",
+                address: "Não encontrado",
+                images: [
+                    "",
+                    "",
+                    ""
+                ]
+            },
+            {
+                name: "Antiquário Bar & Café",
+                instagram: "@antiquariobar",
+                hours: "Seg-dom 17h-1h",
+                prices: "Drinks R$25-40",
+                description: "Bar com decoração antique e cafés especiais.",
+                address: "Não encontrado",
+                images: [
+                    "",
+                    "",
+                    ""
+                ]
+            },
+            {
+                name: "Salve Jorge",
+                instagram: "@salvejorge",
+                hours: "Seg-dom 12h-0h",
+                prices: "Porções R$30-50",
+                description: "Bar tradicional com petiscos e cerveja.",
+                address: "Não encontrado",
+                images: [
+                    "",
+                    "",
+                    ""
+                ]
+            },
+            {
+                name: "'O' Lúdico Crazy Drinks and Food",
+                instagram: "@oludico",
+                hours: "Variável, consultar",
+                prices: "Drinks R$20-35",
+                description: "Bar com drinks loucos e comida lúdica.",
+                address: "R. Itapeti, 30 - Tatuapé, São Paulo/SP",
+                images: [
+                    "",
+                    "",
+                    ""
+                ]
+            },
+            {
+                name: "Parque da Água Branca",
+                instagram: "@parquedaaguabranca",
+                hours: "Diário 6h-20h",
+                prices: "Entrada gratuita",
+                description: "Parque com fazendinha, aves e eventos culturais.",
+                address: "Av. Francisco Matarazzo, 455 - Barra Funda, São Paulo/SP",
+                images: [
+                    "",
+                    "",
+                    ""
+                ]
+            },
+            {
+                name: "LA Sanduicheria Ltda.",
+                instagram: "Não encontrado",
+                hours: "Variável, consultar",
+                prices: "Sanduíches R$20-30",
+                description: "Sanduicheria com opções variadas.",
+                address: "Não encontrado",
+                images: [
+                    "",
+                    "",
+                    ""
+                ]
+            },
+            {
+                name: "Parque Amantikir",
+                instagram: "@parqueamantikir",
+                hours: "Diário 9h-17h",
+                prices: "Ingressos R$40-80",
+                description: "Parque com jardins temáticos e labirinto de grama.",
+                address: "Rod. Campos do Jordão-Eugênio Lefèvre, Km 35 - Campos do Jordão/SP",
+                images: [
+                    "",
+                    "",
+                    ""
+                ]
+            },
+            {
+                name: "Labirinto de Grama",
+                instagram: "Não encontrado",
+                hours: "Variável, consultar",
+                prices: "Não especificado",
+                description: "Atração com labirinto de grama para diversão.",
+                address: "Não encontrado",
+                images: [
+                    "",
+                    "",
+                    ""
+                ]
+            },
+            {
+                name: "Romantik Dalen",
+                instagram: "Não encontrado",
+                hours: "Variável, consultar",
+                prices: "Não especificado",
+                description: "Restaurante romântico com ambiente acolhedor.",
+                address: "Não encontrado",
+                images: [
+                    "",
+                    "",
+                    ""
+                ]
+            },
+            {
+                name: "Pedra do Baú - Cidade vizinha",
+                instagram: "@pedradobau",
+                hours: "Diário amanhecer-anoitecer",
+                prices: "Entrada gratuita",
+                description: "Formação rochosa para trilhas e escalada. Vista panorâmica.",
+                address: "São Bento do Sapucaí/SP",
+                images: [
+                    "",
+                    "",
+                    ""
+                ]
+            },
+            {
+                name: "Brunch da Catedral da Sé",
+                instagram: "@catedraldase",
+                hours: "Domingo manhã",
+                prices: "Não especificado",
+                description: "Brunch na catedral histórica com ambiente solene.",
+                address: "Praça da Sé - Sé, São Paulo/SP",
+                images: [
+                    "",
+                    "",
+                    ""
+                ]
+            },
+            {
+                name: "Neon Brush: Sip and Paint Workshop",
+                instagram: "@neonbrush",
+                hours: "Variável, consultar",
+                prices: "Workshops R$100+",
+                description: "Oficina de pintura com neon e drinks. Experiência criativa.",
+                address: "Não encontrado",
+                images: [
+                    "",
+                    "",
+                    ""
+                ]
+            },
+            {
+                name: "Pinacoteca de São Paulo",
+                instagram: "@pinacotecasp",
+                hours: "Qua-seg 10h-18h",
+                prices: "Entrada R$20-30",
+                description: "Museu de arte brasileira com exposições e jardim.",
+                address: "Praça da Luz, 2 - Luz, São Paulo/SP",
+                images: [
+                    "",
+                    "",
+                    ""
+                ]
+            },
+            {
+                name: "Museu das Favelas",
+                instagram: "@museudasfavelas",
+                hours: "Ter-dom 10h-18h",
+                prices: "Entrada gratuita",
+                description: "Museu sobre cultura das favelas com exposições interativas.",
+                address: "R. Guaicurus, 1024 - Lapa, São Paulo/SP",
+                images: [
+                    "",
+                    "",
+                    ""
+                ]
+            },
+            {
+                name: "Casa Museu Ema Klabin",
+                instagram: "@emaklabin",
+                hours: "Qua-dom 10h-17h",
+                prices: "Entrada gratuita",
+                description: "Casa-museu com coleção de arte e jardim. Visitas guiadas.",
+                address: "R. Portugal, 43 - Jardim Europa, São Paulo/SP",
+                images: [
+                    "",
+                    "",
+                    ""
+                ]
+            },
+            {
+                name: "Feira de Antiguidades Praça Dom Orione",
+                instagram: "Não encontrado",
+                hours: "Domingo 9h-17h",
+                prices: "Entrada gratuita",
+                description: "Feira de antiguidades com itens vintage e colecionáveis.",
+                address: "Praça Dom Orione - Bixiga, São Paulo/SP",
+                images: [
+                    "",
+                    "",
+                    ""
+                ]
+            },
+            {
+                name: "Paparoto Cucina",
+                instagram: "@paparotocucina",
+                hours: "Seg-dom 12h-23h",
+                prices: "Pratos R$50-100",
+                description: "Restaurante italiano com massas e pizzas. Ambiente familiar.",
+                address: "Não encontrado",
+                images: [
+                    "",
+                    "",
+                    ""
+                ]
+            },
+            {
+                name: "Jardim Botânico de São Paulo",
+                instagram: "@jardimbotanicosp",
+                hours: "Ter-dom 9h-17h",
+                prices: "Entrada R$15-30",
+                description: "Jardim botânico com trilhas, orquídeas e estufas.",
+                address: "Av. Miguel Stéfano, 3031 - Água Funda, São Paulo/SP",
+                images: [
+                    "",
+                    "",
+                    ""
+                ]
+            },
+            {
+                name: "Casa das Rosas",
+                instagram: "@casadasrosas",
+                hours: "Ter-dom 10h-18h",
+                prices: "Entrada gratuita",
+                description: "Casa histórica com jardim de rosas e eventos literários.",
+                address: "Av. Paulista, 37 - Bela Vista, São Paulo/SP",
+                images: [
+                    "",
+                    "",
+                    ""
+                ]
+            },
+            {
+                name: "Sloop Burger",
+                instagram: "@sloopburger",
+                hours: "Seg-dom 11h-23h",
+                prices: "Burgers R$20-35",
+                description: "Hamburgueria com burgers artesanais. Ambiente casual.",
+                address: "Não encontrado",
+                images: [
+                    "",
+                    "",
+                    ""
+                ]
+            },
+            {
+                name: "Churrascaria Bramare",
+                instagram: "@churrascariabramare",
+                hours: "Seg-dom 12h-23h",
+                prices: "Rodízio R$100+",
+                description: "Churrascaria com cortes premium e saladas.",
+                address: "Não encontrado",
+                images: [
+                    "",
+                    "",
+                    ""
+                ]
+            },
+            {
+                name: "Le Pain Quotidien",
+                instagram: "@lepainquotidienbr",
+                hours: "Seg-dom 8h-22h",
+                prices: "Pães R$10-20, brunch R$40+",
+                description: "Padaria belga com pães orgânicos e brunch.",
+                address: "Várias unidades",
+                images: [
+                    "",
+                    "",
+                    ""
+                ]
+            },
+            {
+                name: "Castelo dos Vinhais",
+                instagram: "Não encontrado",
+                hours: "Variável, consultar",
+                prices: "Não especificado",
+                description: "Restaurante com tema castelo e vinhos.",
+                address: "Não encontrado",
+                images: [
+                    "",
+                    "",
+                    ""
+                ]
+            },
+            {
+                name: "Sushyo Carrão",
+                instagram: "@sushyocarrao",
+                hours: "Seg-dom 11h-23h",
+                prices: "Sushi R$50-100",
+                description: "Restaurante japonês com rodízio de sushi.",
+                address: "Av. Conselheiro Carrão - Carrão, São Paulo/SP",
+                images: [
+                    "",
+                    "",
+                    ""
+                ]
+            }
+        ];
+const container = document.getElementById('places-container');
+
+places.forEach((place, index) => {
+    const col = document.createElement('div');
+    col.className = "col-12";
+    col.innerHTML = `
+        <div class="card" data-bs-toggle="modal" data-bs-target="#placeModal" onclick="showModal(${index})">
+            <img src="${place.images && place.images.length > 0 ? place.images[0] : ''}" class="card-img-top" alt="${place.name}">
+            <div class="card-body">
+                <h5 class="card-title">${place.name}</h5>
+                <p class="card-text">${place.description}</p>
+            </div>
+        </div>
+    `;
+    container.appendChild(col);
+});
+
+function showModal(index) {
+    const place = places[index];
+    const modalTitle = document.getElementById('placeModalLabel');
+    const modalBody = document.getElementById('modalBody');
+    
+    modalTitle.textContent = place.name;
+
+    if (place.images && place.images.length > 0) {
+        let carouselIndicators = '';
+        let carouselItems = '';
+
+        place.images.forEach((img, i) => {
+            carouselIndicators += `
+                <button type="button" data-bs-target="#carouselPlace" data-bs-slide-to="${i}" ${i === 0 ? 'class="active"' : ''} aria-current="${i === 0 ? 'true' : 'false'}" aria-label="Slide ${i+1}"></button>
+            `;
+            carouselItems += `
+                <div class="carousel-item ${i === 0 ? 'active' : ''}">
+                    <img src="${img}" class="d-block w-100" alt="${place.name}">
+                </div>
+            `;
+        });
+
+        modalBody.innerHTML = `
+            <div id="carouselPlace" class="carousel slide" data-bs-ride="carousel">
+              <div class="carousel-indicators">
+                ${carouselIndicators}
+              </div>
+              <div class="carousel-inner">
+                ${carouselItems}
+              </div>
+              <button class="carousel-control-prev" type="button" data-bs-target="#carouselPlace" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Anterior</span>
+              </button>
+              <button class="carousel-control-next" type="button" data-bs-target="#carouselPlace" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Próximo</span>
+              </button>
+            </div>
+            <p class="mt-3"><strong>Descrição:</strong> ${place.description}</p>
+            <p><strong>Endereço:</strong> ${place.address}</p>
+            <p><strong>Horário:</strong> ${place.hours}</p>
+            <p><strong>Preços:</strong> ${place.prices}</p>
+            ${place.instagram ? `<p><strong>Instagram:</strong> <a href="https://instagram.com/${place.instagram.replace('@','')}" target="_blank">${place.instagram}</a></p>` : ''}
+        `;
+    } else {
+        modalBody.innerHTML = `
+            <p><strong>Descrição:</strong> ${place.description}</p>
+            <p><strong>Endereço:</strong> ${place.address}</p>
+            <p><strong>Horário:</strong> ${place.hours}</p>
+            <p><strong>Preços:</strong> ${place.prices}</p>
+            ${place.instagram ? `<p><strong>Instagram:</strong> <a href="https://instagram.com/${place.instagram.replace('@','')}" target="_blank">${place.instagram}</a></p>` : ''}
+        `;
+    }
+}
+</script>
+</body>
+</html>
